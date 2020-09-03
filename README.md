@@ -1,5 +1,5 @@
 # Curses
-Curses provides a Swift object wrapper for the curses programming library for Linux (tested on Ubuntu 16.04, 18.04)
+Curses provides a Swift object wrapper for the ncurses programming library for Linux (tested on Ubuntu 16.04, 18.04, Fedora 33)
 
 ## What is Curses?
 Curses enables better-looking, text-based (console) applications in a terminal-agnostic manner.
@@ -18,7 +18,7 @@ This wrapper provides access to some of this functionality via Swift objects.  C
 ### Library
 In order to use the library, include this resource as a dependency in Package.swift
 ```swift
-// swift-tools-version:4.0
+// swift-tools-version:5.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -26,7 +26,7 @@ import PackageDescription
 let package = Package(
   name:  "myApplication",
   dependencies: [
-    .package(url: "https://github.com/TheCoderMerlin/Curses.git", from: "1.0.0"),
+    .package(url: "https://github.com/tokyovigilante/Curses.git", .branch("master")),
   ],
   targets: [
     .target(
@@ -104,7 +104,7 @@ mainWindow.write("Hello, world!")
 mainWindow.refresh()
 ```
 ### Enabling Scrolling
-mainWindow.setScroll(enabled:true) 
+mainWindow.setScroll(enabled:true)
 
 ### Moving the Cursor
 ```swift
@@ -118,7 +118,7 @@ mainWindow.write("Cursor is at: \(cursor.position)")
 cursor.popPosition()
 ```
 ### Using Attributes
-Attributes may be turned on by having the window *turnOn()* the attribute. 
+Attributes may be turned on by having the window *turnOn()* the attribute.
 It's polite to *turnOff()* the attribute when done.
 To set a particular attribute without regard to the current attributes at that
 location, execute *setTo()*.
@@ -128,7 +128,7 @@ location, execute *setTo()*.
 mainWindow.turnOn(Attribute.normal)
 mainWindow.write("Normal")
 mainWindow.turnOff(Attribute.normal)
-mainWindow.write(" ")                                                                                                                          
+mainWindow.write(" ")
 
 mainWindow.turnOn(Attribute.standout)
 mainWindow.write("Standout")
@@ -182,7 +182,7 @@ public enum StandardColor : String, CaseIterable {
     case magenta
     case cyan
     case white
-}  
+}
 ```
 Colors are always used in pairs, one for the foreground and one for the background.
 To write to the screen using red as the foreground and white as the background,
@@ -203,17 +203,17 @@ We can create a chart of color pairs and display them:
 // We'll use this for spacing the columns
 let maxColorNameLength = Color.StandardColor.allCases.map {$0.rawValue.count}.max()!
 let xSpaceBetweenNames = 3
-// We'll start the display at the third row 
+// We'll start the display at the third row
 var row = 3
 // Iterate through all of the foreground and background colors
 for foregroundColor in Color.StandardColor.allCases {
     var column = 1
-    for backgroundColor in Color.StandardColor.allCases { 
+    for backgroundColor in Color.StandardColor.allCases {
         // Create a new color pair
         // Note that the number of color pairs is limited so this may not work on all terminals
         precondition(colors.pairCount + 1 < colors.maxPairCount, "Unable to create more color pairs.")
-        let pair = colors.newPair(foreground:Color.standard(foregroundColor), background:Color.standard(backgroundColor)) 
-        
+        let pair = colors.newPair(foreground:Color.standard(foregroundColor), background:Color.standard(backgroundColor))
+
         // Turn on the color attribute
         // It's polite to turn off what we turned on (below)
         mainWindow.turnOn(pair)
@@ -222,25 +222,25 @@ for foregroundColor in Color.StandardColor.allCases {
         // Write the color name
         mainWindow.write(backgroundColor.rawValue)
         // Turn off the color attribute
-        mainWindow.turnOff(pair) 
-        column += 1 
+        mainWindow.turnOff(pair)
+        column += 1
     }
     row += 1
 }
 ```
 Custom colors can be created by specifying red, green, and blue values
-in the range of 0 through 1000, provided the terminal supports this functionality. 
+in the range of 0 through 1000, provided the terminal supports this functionality.
 If supported, there are a limited number of "slots" available .
 ```swift
 precondition(colors.customColorsAreSupported, "Custom colors are not supported.")
 precondition(colors.colorCount + 1 < colors.maxColorCount, "No more slots available for custom colors.")
 let orange = colors.newColor(red:1000, green:500, blue:0)
 precondition(colors.pairCount + 1 < colors.maxPairCount, "Unable to create more color pairs.")
-let orangeOnBlack = colors.newPair(foreground:orange, background:Color.standard(.black)) 
+let orangeOnBlack = colors.newPair(foreground:orange, background:Color.standard(.black))
 
-mainWindow.turnOn(orangeOnBlack) 
-mainWindow.write("Orange") 
-mainWindow.turnOff(orangeOnBlack)  
+mainWindow.turnOn(orangeOnBlack)
+mainWindow.write("Orange")
+mainWindow.turnOff(orangeOnBlack)
 ```
 
 ### Changing the Background
@@ -275,14 +275,14 @@ while true {
         case .arrowUp: label = "Up"
         case .arrowRight: label = "Right"
         case .arrowLeft: label = "Left"
- 
+
         case .function1: label = "F1"
         case .function2: label = "F2"
         case .function3: label = "F3"
         case .function4: label = "F4"
 
         case .enter:     label = "ENTER"
- 
+
         default: label = "Other"
         }
         youPressed = "You pressed a special key: \(label)"

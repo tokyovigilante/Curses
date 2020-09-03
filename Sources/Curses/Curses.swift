@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import CNCURSES
+import CNCurses
 
 
 // References:
@@ -29,28 +29,28 @@ internal class Curses {
     // ============================== Singleton Pattern ==============================
     static let shared = Curses()
 
-    
+
     // ============================== Type ==============================
     enum KeyboardBufferingMode {
         case bufferingIsOn
         case bufferingIsOff
         case halfDelay(tenthsOfSecond:Int)
     }
-        
 
-    
+
+
     // ============================== Variables ==============================
 
     static var handler : CursesHandlerProtocol? = nil
 
     var startUpCount = 0
-    
+
     // Explicitly disable clients from creating objects of this class
     private init() {
         // Register signal handlers
         Curses.registerSignalHandlers()
     }
-    
+
 
     // ============================== Internal API ==============================
 
@@ -59,23 +59,23 @@ internal class Curses {
 
         // Store user's handler
         Curses.handler = handler
-        
+
 
         // Set locale
         setlocale(LC_ALL, "")
 
         // Initialize curses
-        CNCURSES.initscr()
-        CNCURSES.noecho()
+        CNCurses.initscr()
+        CNCurses.noecho()
 
         startUpCount += 1
     }
-    
+
     func shutDown() {
         precondition(startUpCount == 1, "No instance of Curses is currently running.")
 
         Curses.handler = nil
-        CNCURSES.endwin()
+        CNCurses.endwin()
 
         startUpCount -= 1
     }
@@ -93,42 +93,42 @@ internal class Curses {
     func screenSize(windowHandle:UnsafeMutablePointer<WINDOW>) -> Size {
         return getScreenSize(windowHandle:windowHandle)
     }
-    
+
     func setCursorStyle(_ cursorStyle:CursorStyle) {
-        CNCURSES.curs_set(cursorStyle.rawValue)
+        CNCurses.curs_set(cursorStyle.rawValue)
     }
 
     func setKeyPadMode(windowHandle:UnsafeMutablePointer<WINDOW>) {
-        CNCURSES.keypad(windowHandle, true) // Processes special keys into special codes rather than escape sequences
+        CNCurses.keypad(windowHandle, true) // Processes special keys into special codes rather than escape sequences
     }
 
     func setKeyboardBufferingMode(_ keyboardBufferingMode:KeyboardBufferingMode) {
         switch (keyboardBufferingMode) {
         case .bufferingIsOn :
-            CNCURSES.nocbreak()
+            CNCurses.nocbreak()
         case .bufferingIsOff:
-            CNCURSES.cbreak()
+            CNCurses.cbreak()
         case .halfDelay(let tenthsOfSecond):
-            CNCURSES.halfdelay(Int32(tenthsOfSecond))
+            CNCurses.halfdelay(Int32(tenthsOfSecond))
         }
     }
 
     func setScroll(windowHandle:UnsafeMutablePointer<WINDOW>, enabled:Bool) {
-        CNCURSES.scrollok(windowHandle, enabled)
+        CNCurses.scrollok(windowHandle, enabled)
     }
 
     func getKey(windowHandle:UnsafeMutablePointer<WINDOW>) -> Key {
-        let code =  CNCURSES.wgetch(windowHandle)
+        let code =  CNCurses.wgetch(windowHandle)
         let key = Key(code:code)
         return key
     }
 
     func newWindow(position:Point, size:Size) -> UnsafeMutablePointer<WINDOW> {
-        return CNCURSES.newwin(Int32(size.height), Int32(size.width), Int32(position.y), Int32(position.x))
+        return CNCurses.newwin(Int32(size.height), Int32(size.width), Int32(position.y), Int32(position.x))
     }
 
     func moveWindow(windowHandle:UnsafeMutablePointer<WINDOW>, to:Point) {
-        CNCURSES.mvwin(windowHandle, Int32(to.y), Int32(to.x))
+        CNCurses.mvwin(windowHandle, Int32(to.y), Int32(to.x))
     }
 
     func getWindowPosition(windowHandle:UnsafeMutablePointer<WINDOW>) -> Point {
@@ -138,52 +138,52 @@ internal class Curses {
     }
 
     func resizeWindow(windowHandle:UnsafeMutablePointer<WINDOW>, size:Size) {
-        CNCURSES.wresize(windowHandle, Int32(size.height), Int32(size.width))
+        CNCurses.wresize(windowHandle, Int32(size.height), Int32(size.width))
     }
-    
+
     func refresh(windowHandle:UnsafeMutablePointer<WINDOW>) {
-        CNCURSES.wrefresh(windowHandle)
+        CNCurses.wrefresh(windowHandle)
     }
 
     func clear(windowHandle:UnsafeMutablePointer<WINDOW>) {
-        CNCURSES.wclear(windowHandle)
+        CNCurses.wclear(windowHandle)
     }
 
     func clearToEndOfLine(windowHandle:UnsafeMutablePointer<WINDOW>) {
-        CNCURSES.wclrtoeol(windowHandle)
+        CNCurses.wclrtoeol(windowHandle)
     }
 
     func clearToBottomOfWindow(windowHandle:UnsafeMutablePointer<WINDOW>) {
-        CNCURSES.wclrtobot(windowHandle)
+        CNCurses.wclrtobot(windowHandle)
     }
-    
+
     func move(windowHandle:UnsafeMutablePointer<WINDOW>, to:Point) {
-        CNCURSES.wmove(windowHandle, Int32(to.y), Int32(to.x))
+        CNCurses.wmove(windowHandle, Int32(to.y), Int32(to.x))
     }
 
     func write(windowHandle:UnsafeMutablePointer<WINDOW>, string:String) {
-        CNCURSES.waddstr(windowHandle, string)
+        CNCurses.waddstr(windowHandle, string)
     }
 
     func attributeOn(windowHandle:UnsafeMutablePointer<WINDOW>, attributeValue:Int) {
-        CNCURSES.wattron(windowHandle, Int32(attributeValue))
+        CNCurses.wattron(windowHandle, Int32(attributeValue))
     }
 
     func attributeOff(windowHandle:UnsafeMutablePointer<WINDOW>, attributeValue:Int) {
-        CNCURSES.wattroff(windowHandle, Int32(attributeValue))
+        CNCurses.wattroff(windowHandle, Int32(attributeValue))
     }
 
     func attributeSet(windowHandle:UnsafeMutablePointer<WINDOW>, attributeValue:Int) {
-        CNCURSES.wattrset(windowHandle, Int32(attributeValue))
+        CNCurses.wattrset(windowHandle, Int32(attributeValue))
     }
 
     func backgroundSet(windowHandle:UnsafeMutablePointer<WINDOW>, attributeValue:Int, character:Character) {
         let unicodeScalars = character.unicodeScalars
         let ascii = UInt32(unicodeScalars[unicodeScalars.startIndex].value)
         let attributeAndCharacter : UInt32 = UInt32(attributeValue) | ascii
-        CNCURSES.wbkgdset(windowHandle, attributeAndCharacter)
+        CNCurses.wbkgdset(windowHandle, attributeAndCharacter)
     }
-    
+
     var maxColorCount : Int {
         return Int(COLORS)
     }
@@ -292,7 +292,7 @@ internal class Curses {
     }
 
 
-    /* These attributes are not imported into swift and are duplicated here 
+    /* These attributes are not imported into swift and are duplicated here
      #define NCURSES_ATTR_SHIFT       8
      #define NCURSES_BITS(mask,shift) (NCURSES_CAST(chtype,(mask)) << ((shift) + NCURSES_ATTR_SHIFT))
 
@@ -324,7 +324,7 @@ internal class Curses {
     private static func ncursesBits(mask:UInt32, shift:UInt32) -> UInt32 {
         return mask << (shift + 8)
     }
-    
+
 
     // ============================== Signal Handler Definitions ==============================
     private enum Signal : Int32 {
@@ -340,7 +340,7 @@ internal class Curses {
 
     private static func registerSignalHandlers() {
         // Register signal handlers
-        trap(signalNumber:.int) {signal in 
+        trap(signalNumber:.int) {signal in
             Curses.interruptHandler(signal)
         }
 
@@ -362,6 +362,6 @@ internal class Curses {
         }
     }
 
-    
-    
+
+
 }

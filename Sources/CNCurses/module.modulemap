@@ -1,0 +1,6 @@
+module CNCurses {
+    umbrella header "include/cncurses.h"
+    link "ncurses"
+    link "tinfo"
+    export *
+}

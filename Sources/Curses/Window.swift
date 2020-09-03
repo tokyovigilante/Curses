@@ -16,18 +16,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import CNCURSES
+import CNCurses
 
 public class Window {
     private let curses = Curses.shared
-    
+
     let windowHandle : UnsafeMutablePointer<WINDOW>
     private var _cursor : Cursor! = nil
 
     public var cursor : Cursor {
         return _cursor
     }
-    
+
     // Creates the default window covering the entire screen
     internal init() {
         windowHandle = stdscr
@@ -167,7 +167,7 @@ public class Window {
     public func getStringFromTextField(at fieldPosition:Point, maxCharacters:Int, fieldColorPair:ColorPair?) -> String {
         // Access keyboard
         let keyboard = Keyboard.shared
-        
+
         // Save cursor position to be restored later and move cursor to field
         cursor.pushPosition()
         cursor.position = fieldPosition
@@ -179,7 +179,7 @@ public class Window {
             write(pad)
             cursor.position = fieldPosition
         }
-        
+
         var string = ""
         var insertionPoint = string.startIndex
         var shouldExit = false
@@ -261,7 +261,7 @@ public class Window {
         if let fieldColorPair = fieldColorPair {
             turnOff(fieldColorPair)
         }
-        
+
         // Restore cursor position and return string
         cursor.popPosition()
         return string

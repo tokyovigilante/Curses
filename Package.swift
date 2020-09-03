@@ -1,21 +1,21 @@
-// swift-tools-version:4.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version:5.2
 
 import PackageDescription
 
 let package = Package(
-  name:  "Curses",
-  products: [
-    .library(name: "Curses",
-             type: .dynamic,
-             targets: ["Curses"]),
-  ], 
-  dependencies: [
-    .package(url:  "https://github.com/TheCoderMerlin/CNCURSES.git", from: "1.0.0"),
-  ],
-  targets: [
-    .target(
-      name:"Curses",
-      path:"Sources"),
-  ]
+    name:  "Curses",
+    products: [
+        .library(name: "Curses", type: .dynamic, targets: ["Curses"]),
+    ],
+    dependencies: [],
+    targets: [
+        .systemLibrary(
+            name: "CNCurses",
+            pkgConfig: "ncurses"
+        ),
+        .target(
+            name:"Curses",
+            dependencies: ["CNCurses"]
+        )
+    ]
 )

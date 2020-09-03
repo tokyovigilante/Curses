@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import CNCURSES
+import CNCurses
 
 public struct Key {
     private static let down             = KEY_DOWN	     /* down-arrow key */
@@ -129,7 +129,7 @@ public struct Key {
             guard let unicodeScalar =  UnicodeScalar(Int(code)) else {
                 fatalError("Expected unicode scalar for code: \(code)")
             }
-            
+
             character = Character(unicodeScalar)
             control = nil
         } else {
@@ -142,8 +142,8 @@ public struct Key {
 
 
 
-    
-      /*    
+
+      /*
 let KEY_HOME	     = 0o0406		/* home key */
 
 
@@ -230,6 +230,6 @@ let KEY_RESIZE	= 0o0632		/* Terminal resize event */
 let KEY_EVENT	= 0o0633		/* We were interrupted by an event */
 */
 
-    
+
 }
 
